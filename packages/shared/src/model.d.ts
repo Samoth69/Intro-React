@@ -1,5 +1,5 @@
-export interface userTask {
-  id: number,
+export interface UserTask {
+  id?: number,
   text: string,
-  checked: number,
+  checked?: number,
 }

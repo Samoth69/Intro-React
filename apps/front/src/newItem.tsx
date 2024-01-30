@@ -1,9 +1,23 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
+import { UserTask } from "shared/src/model";
 
-export function NewItem({ onNewItem }: { onNewItem: (text: string) => void }) {
+export function NewItem() {
+  const queryClient = useQueryClient();
   const [textInput, setTextInput] = useState("");
+  const createTodo = useMutation({
+    mutationFn: (newTodo: UserTask) =>
+      axios
+        .post("http://localhost:3000/todos", newTodo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["todos"]
+      })
+    }
+  })
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
@@ -12,7 +26,7 @@ export function NewItem({ onNewItem }: { onNewItem: (text: string) => void }) {
   }
 
   const addNewItem = () => {
-    onNewItem(textInput);
+    createTodo.mutate({ id: undefined, checked: undefined, text: textInput });
     setTextInput("");
   }
   return (

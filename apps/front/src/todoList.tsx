@@ -1,92 +1,24 @@
-import { ReactElement, useEffect, useState } from "react"
-import { Item } from "./todoItem";
+import { ReactElement } from "react"
+import { TodoItem } from "./todoItem";
 import { NewItem } from "./newItem";
-import { userTask } from "shared/src/model";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { UserTask } from "shared/src/model";
 
 function TodoList() {
-  const [data, setData] = useState<userTask[]>();
+  const { isPending, isError, data, error } = useQuery<UserTask[]>({
+    queryKey: ["todos"],
+    queryFn: () => axios
+      .get("http://localhost:3000/todos")
+      .then((res) => res.data)
+  })
 
-  const fetchUpdateData = async (method: "GET" | "POST" | "PUT" | "DELETE", id: number | null, body: any | null) => {
-    let url = "http://localhost:3000/tasks";
-    if (method === "PUT" || method === "DELETE") {
-      url += "/" + id;
-    }
-
-    console.log(method, id, body);
-
-    if (body != null) {
-      body = JSON.stringify(body);
-    }
-
-    const ret = await (
-      await fetch(url, {
-        method: method,
-        headers: new Headers({ 'content-type': 'application/json' }),
-        body: body
-      })
-    ).json();
-    console.log("ret", ret);
-
-    let updatedData;
-    if (data == undefined) {
-      updatedData = [];
-    } else {
-      updatedData = [...data];
-    }
-
-    if (method === "GET") {
-      updatedData = ret;
-    } else if (method === "PUT") {
-      updatedData = data.map((v: userTask) => {
-        if (v.id === id) {
-          return ret;
-        }
-        return v;
-      })
-    } else if (method === "POST") {
-      updatedData = [...data, ret];
-    } else if (method === "DELETE") {
-      updatedData = data?.filter(f => f.id !== id);
-    } else {
-      console.error("Methode non supporté");
-    }
-
-    console.log("updatedData", updatedData);
-    setData(updatedData);
-  }
-
-  useEffect(() => {
-    fetchUpdateData("GET", null, null);
-  }, []);
-
-  const onCheckChange = async (id: number) => {
-    const updatedItem = data?.map((v) => {
-      if (v.id !== id) return v;
-      if (v.checked === 0) {
-        v.checked = 1;
-      } else {
-        v.checked = 0;
-      }
-      return v;
-    });
-    await fetchUpdateData("PUT", id, updatedItem?.filter(f => f.id === id)[0]);
-  }
-
-  const onDelete = async (id: number) => {
-    await fetchUpdateData("DELETE", id, null);
-  }
-
-  const onNewItem = async (text: string) => {
-    await fetchUpdateData("POST", null, { text: text })
-  }
-
-  const onUpdate = async (id: number, text: string) => {
-    await fetchUpdateData("PUT", id, { text: text });
-  }
+  if (isPending) return "loading";
+  if (isError) return "An error has occured: " + error.message;
 
   const items: ReactElement[] = [];
-  data?.forEach(f => {
-    items.push(<Item t={f} key={f.id} onCheckChange={onCheckChange} onUpdate={onUpdate} onDelete={onDelete} />);
+  data.forEach(f => {
+    items.push(<TodoItem t={f} key={f.id} />);
   })
 
   return (
@@ -94,7 +26,7 @@ function TodoList() {
       <legend>TODO</legend>
 
       {items}
-      <NewItem onNewItem={onNewItem} />
+      <NewItem />
     </fieldset>
   )
 }

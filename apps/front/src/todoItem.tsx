@@ -1,22 +1,54 @@
 import { faCheck, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
-import { userTask } from "shared/src/model";
+import { UserTask } from "shared/src/model";
 
-export function Item({ t, onCheckChange, onUpdate, onDelete }: {
-  t: userTask,
-  onCheckChange: (id: number) => void,
-  onUpdate: (id: number, text: string) => void,
-  onDelete: (id: number) => void
-}) {
+export function TodoItem({ t }: { t: UserTask }) {
+  const queryClient = useQueryClient();
+
   const [editMode, setEditMode] = useState(false);
   const [editText, setEditText] = useState(t.text);
+  const updateTodoMutation = useMutation({
+    mutationFn: (updatedTodo: UserTask) =>
+      axios
+        .put(`http://localhost:3000/todos/${t.id}`, updatedTodo)
+        .then(resp => resp.data),
+    onSuccess: (updatedTodo: UserTask) => {
+      queryClient.setQueryData(["todos", updatedTodo.id], updatedTodo)
+      queryClient.invalidateQueries({
+        queryKey: ["todos"]
+      })
+    }
+  })
+  const deleteTodoMutation = useMutation({
+    mutationFn: () =>
+      axios
+        .delete(`http://localhost:3000/todos/${t.id}`),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["todos", t.id], exact: true })
+      queryClient.invalidateQueries({
+        queryKey: ["todos"]
+      })
+    }
+  })
 
   const toggleEditMode = () => {
     if (editMode && t.text !== editText) {
-      onUpdate(t.id, editText);
+      updateTodoMutation.mutate({ id: t.id, text: editText });
     }
     setEditMode(!editMode);
+  }
+
+  const onCheckChange = () => {
+    let newValue;
+    if (t.checked === 0) {
+      newValue = 1;
+    } else {
+      newValue = 0;
+    }
+    updateTodoMutation.mutate({ id: t.id, checked: newValue, text: t.text })
   }
 
   return (
@@ -29,7 +61,7 @@ export function Item({ t, onCheckChange, onUpdate, onDelete }: {
               className="peer size-3.5 shrink-0 appearance-none rounded-sm border border-slate-300 accent-pink-500 checked:appearance-auto"
               name={String(t.id)}
               checked={t.checked === 1}
-              onChange={() => onCheckChange(t.id)} />
+              onChange={() => onCheckChange()} />
             <span className="select-none grow text-slate-700 peer-checked:text-slate-400 peer-checked:line-through"
             >{t.text}</span>
           </>
@@ -51,7 +83,7 @@ export function Item({ t, onCheckChange, onUpdate, onDelete }: {
           !editMode ?
             <div
               className="shrink-0 size-[26px] flex items-center rounded-md hover:bg-red-50 hover:text-red-500"
-              onClick={() => onDelete(t.id)}>
+              onClick={() => deleteTodoMutation.mutate()}>
               <FontAwesomeIcon icon={faXmark} className="flex-1" />
             </div> :
             <div />

@@ -145,12 +145,12 @@ app.get('/feed', async (req, res) => {
   res.json(posts)
 })
 
-app.get("/tasks", async (req, res) => {
+app.get("/todos", async (req, res) => {
   const tasks = await prisma.task.findMany()
   res.json(tasks)
 })
 
-app.post(`/tasks`, async (req, res) => {
+app.post(`/todos`, async (req, res) => {
   const result = await prisma.task.create({
     data: {
       text: req.body.text
@@ -159,7 +159,7 @@ app.post(`/tasks`, async (req, res) => {
   res.json(result)
 })
 
-app.put('/tasks/:id', async (req, res) => {
+app.put('/todos/:id', async (req, res) => {
   const { id } = req.params
 
   try {
@@ -176,7 +176,7 @@ app.put('/tasks/:id', async (req, res) => {
   }
 })
 
-app.delete(`/tasks/:id`, async (req, res) => {
+app.delete(`/todos/:id`, async (req, res) => {
   const { id } = req.params
   const post = await prisma.task.delete({
     where: {
