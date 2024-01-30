@@ -17,7 +17,7 @@ function TodoList() {
   if (isError) return "An error has occured: " + error.message;
 
   const items: ReactElement[] = [];
-  data.forEach(f => {
+  data.sort((a, b) => a.text.localeCompare(b.text)).forEach(f => {
     items.push(<TodoItem t={f} key={f.id} />);
   })
 
