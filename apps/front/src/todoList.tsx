@@ -1,9 +1,9 @@
 import { ReactElement, useEffect, useState } from "react"
-import { Item } from "./Item";
+import { Item } from "./todoItem";
 import { NewItem } from "./newItem";
 import { userTask } from "shared/src/model";
 
-function App() {
+function TodoList() {
   const [data, setData] = useState<userTask[]>();
 
   const fetchUpdateData = async (method: "GET" | "POST" | "PUT" | "DELETE", id: number | null, body: any | null) => {
@@ -99,4 +99,4 @@ function App() {
   )
 }
 
-export default App
+export default TodoList
