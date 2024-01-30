@@ -1,4 +1,4 @@
-interface userTask {
+export interface userTask {
   id: number,
   text: string,
   checked: number,

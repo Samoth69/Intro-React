@@ -1,6 +1,7 @@
 import { faCheck, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { userTask } from "shared/src/model";
 
 export function Item({ t, onCheckChange, onUpdate, onDelete }: {
   t: userTask,

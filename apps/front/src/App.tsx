@@ -1,6 +1,7 @@
 import { ReactElement, useEffect, useState } from "react"
 import { Item } from "./Item";
 import { NewItem } from "./newItem";
+import { userTask } from "shared/src/model";
 
 function App() {
   const [data, setData] = useState<userTask[]>();
