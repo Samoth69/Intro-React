@@ -1,6 +1,6 @@
 import { faCheck, faPen, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { UserTask } from "shared/src/model";
