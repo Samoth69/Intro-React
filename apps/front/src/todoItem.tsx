@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { UserTask } from "shared/src/model";
+import { EditItem } from "./editItem";
 
 export function TodoItem({ t }: { t: UserTask }) {
   const queryClient = useQueryClient();
@@ -36,9 +37,9 @@ export function TodoItem({ t }: { t: UserTask }) {
   })
 
   const toggleEditMode = () => {
-    if (editMode && t.text !== editText) {
-      updateTodoMutation.mutate({ id: t.id, text: editText });
-    }
+    // if (editMode && t.text !== editText) {
+    //   updateTodoMutation.mutate({ id: t.id, text: editText });
+    // }
     setEditMode(!editMode);
   }
 
@@ -65,31 +66,27 @@ export function TodoItem({ t }: { t: UserTask }) {
               onChange={() => onCheckChange()} />
             <span className="select-none grow text-slate-700 peer-checked:text-slate-400 peer-checked:line-through"
             >{t.text}</span>
+            <div className="flex flex-row items-center">
+              <div className="shrink-0 size-[26px] flex items-center rounded-md hover:bg-gray-100"
+                onClick={() => toggleEditMode()}>
+                <FontAwesomeIcon icon={faPen} className="flex-1" />
+              </div>
+              <div
+                className="shrink-0 size-[26px] flex items-center rounded-md hover:bg-red-50 hover:text-red-500"
+                onClick={() => deleteTodoMutation.mutate()}>
+                <FontAwesomeIcon icon={faXmark} className="flex-1" />
+              </div>
+            </div>
           </>
           :
-          <>
-            <textarea
-              className="grow"
-              value={editText}
-              onChange={e => setEditText(e.target.value)} />
-          </>
+          <div className="grow gap-3">
+            <EditItem initialText={t.text} onSubmit={(data) => {
+              toggleEditMode();
+              updateTodoMutation.mutate(data);
+            }} />
+          </div>
         }
       </label>
-      <div className="flex flex-row items-center">
-        <div className="shrink-0 size-[26px] flex items-center rounded-md hover:bg-gray-100"
-          onClick={() => toggleEditMode()}>
-          <FontAwesomeIcon icon={editMode ? faCheck : faPen} className="flex-1" />
-        </div>
-        {
-          !editMode ?
-            <div
-              className="shrink-0 size-[26px] flex items-center rounded-md hover:bg-red-50 hover:text-red-500"
-              onClick={() => deleteTodoMutation.mutate()}>
-              <FontAwesomeIcon icon={faXmark} className="flex-1" />
-            </div> :
-            <></>
-        }
-      </div>
     </div>
   )
 }

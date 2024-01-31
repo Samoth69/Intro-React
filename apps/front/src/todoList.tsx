@@ -1,9 +1,9 @@
 import { ReactElement } from "react"
 import { TodoItem } from "./todoItem";
-import { NewItem } from "./newItem";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { UserTask } from "shared/src/model";
+import { NewItem } from "./newItem";
 
 function TodoList() {
   const { isPending, isError, data, error } = useQuery<UserTask[]>({
