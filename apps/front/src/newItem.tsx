@@ -1,9 +1,10 @@
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { UserTask } from "shared/src/model";
+import { UserTask, UserTaskSchema } from "shared/src/model";
 
 export function NewItem() {
   const queryClient = useQueryClient();
@@ -17,7 +18,9 @@ export function NewItem() {
       })
     }
   })
-  const { register, handleSubmit, reset } = useForm<UserTask>()
+  const { register, handleSubmit, reset } = useForm<UserTask>({
+    resolver: zodResolver(UserTaskSchema)
+  });
   const onSubmit: SubmitHandler<UserTask> = (data) => {
     createTodo.mutate(data);
     reset();

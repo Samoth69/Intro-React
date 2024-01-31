@@ -10,6 +10,7 @@ export function TodoItem({ t }: { t: UserTask }) {
 
   const [editMode, setEditMode] = useState(false);
   const [editText, setEditText] = useState(t.text);
+
   const updateTodoMutation = useMutation({
     mutationFn: (updatedTodo: UserTask) =>
       axios
@@ -86,7 +87,7 @@ export function TodoItem({ t }: { t: UserTask }) {
               onClick={() => deleteTodoMutation.mutate()}>
               <FontAwesomeIcon icon={faXmark} className="flex-1" />
             </div> :
-            <div />
+            <></>
         }
       </div>
     </div>
