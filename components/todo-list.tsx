@@ -1,9 +1,10 @@
-import prisma from '@/lib/prisma'
+import { PrismaClient } from '@prisma/client'
 import { TodoItem } from './todo-item'
 import { TodoNew } from './todo-new'
 
 export default async function TodoList() {
   const startTime = Date.now()
+  const prisma = new PrismaClient();
   const tasks = await prisma.task.findMany()
   const duration = Date.now() - startTime
 

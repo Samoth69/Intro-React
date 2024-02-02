@@ -1,8 +1,11 @@
 'use server';
 
+import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+
+const prisma = new PrismaClient();
 
 const DeleteSchema = z.object({
   id: z.number(),
@@ -30,7 +33,7 @@ export async function createTodo(data: CUTodoSchemaType) {
   console.log("create todo", data);
   const obj = CUTodoSchema.parse(data);
 
-  await prisma?.task.create({
+  await prisma.task.create({
     data: {
       ...obj
     }
@@ -43,7 +46,7 @@ export async function updateTodo(id: number, data: CUTodoSchemaType) {
   console.log("update", data);
   const obj = CUTodoSchema.parse(data);
 
-  await prisma?.task.update({
+  await prisma.task.update({
     where: {
       id: id
     },
@@ -59,7 +62,7 @@ export async function updateTodo(id: number, data: CUTodoSchemaType) {
 export async function deleteTodo(data: DeleteSchemaType) {
   console.log("delete", data);
   const obj = DeleteSchema.parse(data);
-  await prisma?.task.delete({
+  await prisma.task.delete({
     where: {
       id: data.id
     }
@@ -68,7 +71,7 @@ export async function deleteTodo(data: DeleteSchemaType) {
 }
 
 export async function getTodo(id: number) {
-  return await prisma?.task.findFirst({
+  return await prisma.task.findFirst({
     where: {
       id: id
     }
