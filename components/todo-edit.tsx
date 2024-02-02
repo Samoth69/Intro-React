@@ -11,13 +11,13 @@ const TodoSchema = z.object({
   checked: z.number().default(0)
 })
 
-type CreateTodoSchemaType = z.infer<typeof TodoSchema>;
+type TodoSchemaType = z.infer<typeof TodoSchema>;
 
-export function EditItem({ initialText, onSubmit }: { initialText: string, onSubmit: (text: CreateTodoSchemaType) => void }) {
-  const { register, handleSubmit, reset, formState: { errors }, } = useForm<CreateTodoSchemaType>({
+export function EditItem({ initialText, onSubmit }: { initialText: string, onSubmit: (text: TodoSchemaType) => void }) {
+  const { register, handleSubmit, reset, formState: { errors }, } = useForm<TodoSchemaType>({
     resolver: zodResolver(TodoSchema)
   });
-  const onSubmitHandler: SubmitHandler<CreateTodoSchemaType> = (data) => {
+  const onSubmitHandler: SubmitHandler<TodoSchemaType> = (data) => {
     onSubmit(data);
     reset();
   };

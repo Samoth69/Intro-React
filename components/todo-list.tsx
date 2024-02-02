@@ -10,9 +10,10 @@ export default async function TodoList() {
   return (
     <fieldset className='container max-w-sm mx-auto px-4 space-y-3'>
       <legend>TODO</legend>
+      <p>Durée de chargement: {duration}ms</p>
 
-      {tasks.map((task) => (
-        <TodoItem t={task} key={task.id} />
+      {tasks.sort((a, b) => a.id - b.id).map((item) => (
+        <TodoItem task={item} key={item.id} />
       ))}
       <TodoNew />
     </fieldset>
