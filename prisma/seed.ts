@@ -1,4 +1,6 @@
-import prisma from '../lib/prisma'
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient();
 
 async function main() {
   if (await prisma.task.count() === 0) {
